@@ -1,1 +1,37 @@
-# Docker Compose configuration for Loan Orchestrator
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16.3
+    environment:
+      POSTGRES_USER: loan_user
+      POSTGRES_PASSWORD: loan_pass
+      POSTGRES_DB: loan_orchestrator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loan_user -d loan_orchestrator"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://loan_user:loan_pass@db:5432/loan_orchestrator
+      API_V1_STR: /api/v1
+      PROJECT_NAME: Loan Orchestrator
+      BACKEND_CORS_ORIGINS: http://localhost:3000,http://localhost:5173,http://localhost
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+volumes:
+  postgres_data:
