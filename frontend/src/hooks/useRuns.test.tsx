@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRuns, useRun, useCreateRun } from './useRuns';
 import { runsApi } from '@/api';
 import type { ReactNode } from 'react';
-import React from 'react';
 
 // Mock the API
 vi.mock('@/api', () => ({
