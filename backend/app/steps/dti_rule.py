@@ -27,7 +27,7 @@ class DTIRuleStep(BaseStep):
         # Calculate DTI
         dti = float(declared_debts) / float(monthly_income) if monthly_income > 0 else 1.0
 
-        passed = dti < max_dti
+        passed = dti <= max_dti
 
         details = {
             "dti": round(dti, 4),
